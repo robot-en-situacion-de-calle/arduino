@@ -98,15 +98,19 @@ void loop() {
     midi_note(1,transform_range(ldr_value, 1023),1);
   }
 
-  if(ultrasonico_value < ultrasonico_umbral)
+  if(ultrasonico_value < 170)
   {
     atencion = 1;
+  }
+  if(ultrasonico_value < ultrasonico_umbral)
+  {
+    atencion = 2;
     if (10000 < millis() - ultrasonico_last)
     {
-      atencion = 2;
+      atencion = 3;
       if (30000 < millis() - ultrasonico_last)
       {
-        atencion = 3;
+        atencion = 4;
       }
     }
   }
