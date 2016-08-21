@@ -2,7 +2,7 @@
 #include <Bounce.h>
 
 int mano_pin = 5;
-int cabeza_pin = 6;
+int cabeza_pin = 3;
 int pos;
 
 int ldr_pin = A0;
