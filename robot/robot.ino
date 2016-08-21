@@ -19,6 +19,7 @@ int atencion = 0;
 int chan1 = 144;
 int chan2 = 145;
 
+int cabeza_status = 0;
 Servo mano;
 Servo cabeza;
 
@@ -44,16 +45,26 @@ void cerrar_mano()
 
 void subir_cabeza()
 {
+  if (cabeza_status == 0)
+  {
   cabeza.writeMicroseconds(CW);
   delay(150);
   cabeza.writeMicroseconds(STOP);
+  cabeza_status = 1;
+  }
+
 }
 
 void bajar_cabeza()
 {
+  if (cabeza_status)
+  {
   cabeza.writeMicroseconds(CCW);
   delay(150);
   cabeza.writeMicroseconds(STOP);
+  cabeza_status = 0; 
+  }
+
 }
 
 void MIDImessage(byte command, byte data1, byte data2)
@@ -75,11 +86,11 @@ void moneda()
 {
   delay(200);
   abrir_mano();
-  subir_cabeza();
+  //subir_cabeza();
   midi_note(chan1,1,transform_range(ldr_value, 1023));
   cerrar_mano();
   delay(100);
-  bajar_cabeza();
+  //bajar_cabeza();
 }
 
 long ultrasonico()
@@ -143,6 +154,7 @@ void loop() {
   }
   if(ultrasonico_value < ultrasonico_umbral)
   {
+    subir_cabeza();
     atencion = 2;
     if (10000 < millis() - ultrasonico_last)
     {
@@ -157,6 +169,7 @@ void loop() {
   {
     atencion = 0;
     ultrasonico_last = millis();
+    bajar_cabeza();
   }
   midi_note(chan2, atencion, transform_range(ultrasonico_value, 170));
 }
