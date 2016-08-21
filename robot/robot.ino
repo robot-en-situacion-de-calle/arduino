@@ -15,6 +15,7 @@ int ultrasonico_umbral = 45;
 int ultrasonico_last;
 int led = 13;
 int atencion = 0;
+int moneda_status = 0;
 
 int chan1 = 144;
 int chan2 = 145;
@@ -23,36 +24,34 @@ int cabeza_status = 0;
 Servo mano;
 Servo cabeza;
 
-#define CW   1900
+#define CW   1800
 #define STOP 1550
 #define CCW  1000
 
 void abrir_mano()
 {
-  for(pos = 100; pos <= 100; pos--)
-  {
-    mano.write(pos);
-  }
+  mano.write(200);
+
 }
 
 void cerrar_mano()
 {
-  for(pos = 0; pos <= 100; pos++)
-  {
-    mano.write(pos);
-  }
+  mano.write(15);
+
 }
 
 void subir_cabeza()
 {
   if (cabeza_status == 0)
   {
-  cabeza.writeMicroseconds(CW);
-  delay(150);
+  for(pos = 0; pos < 190; pos++)
+  {
+    cabeza.writeMicroseconds(CW-pos);
+    delay(1);
+  }
   cabeza.writeMicroseconds(STOP);
   cabeza_status = 1;
   }
-
 }
 
 void bajar_cabeza()
@@ -60,7 +59,12 @@ void bajar_cabeza()
   if (cabeza_status)
   {
   cabeza.writeMicroseconds(CCW);
-  delay(150);
+  delay(20);
+  for(pos = 0; pos < 190; pos++)
+  {
+    cabeza.writeMicroseconds(CCW+pos);
+    delay(1);
+  }
   cabeza.writeMicroseconds(STOP);
   cabeza_status = 0; 
   }
@@ -84,13 +88,16 @@ void midi_note(int chan, int nota, int vel)
 
 void moneda()
 {
-  delay(200);
-  abrir_mano();
-  //subir_cabeza();
-  midi_note(chan1,1,transform_range(ldr_value, 1023));
-  cerrar_mano();
-  delay(100);
-  //bajar_cabeza();
+  if(moneda_status == 0){
+    moneda_status = 1;
+    delay(200);
+    abrir_mano();
+    //subir_cabeza();
+    midi_note(chan1,1,transform_range(ldr_value, 1023));
+    delay(1000);
+    cerrar_mano();
+    //bajar_cabeza();   
+  }
 }
 
 long ultrasonico()
@@ -145,7 +152,8 @@ void loop() {
   }
   else
   {
-    midi_note(chan1,0,transform_range(ldr_value, 1023));
+    moneda_status = 0;
+    //midi_note(chan1,0,transform_range(ldr_value, 1023));
   }
 
   if(ultrasonico_value < 170)
@@ -169,7 +177,8 @@ void loop() {
   {
     atencion = 0;
     ultrasonico_last = millis();
+    delay(400);
     bajar_cabeza();
   }
-  midi_note(chan2, atencion, transform_range(ultrasonico_value, 170));
+  //midi_note(chan2, atencion, transform_range(ultrasonico_value, 170));
 }
