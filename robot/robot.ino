@@ -25,18 +25,23 @@ int chan2 = 145;
 Servo mano;
 Servo cabeza;
 
-void swipe_servos()
+void swipe_servo_mano()
 {
-  for(pos = 0; pos <= 180; pos++)
+  if(cerrar==1)
+  {
+  for(pos = 0; pos <= 100; pos++)
   {
     mano.write(pos);
-    cabeza.write(pos);
   }
-  for(pos = 180; pos>=0; pos--)
+  }
+  else 
+    {
+  for(pos = 100; pos <= 100; pos--)
   {
     mano.write(pos);
-    cabeza.write(pos);
   }
+  }
+
 }
 
 void MIDImessage(byte command, byte data1, byte data2)
@@ -57,7 +62,7 @@ void midi_note(int chan, int nota, int vel)
 void moneda()
 {
   midi_note(chan1,127,transform_range(ldr_value, 1023));
-  swipe_servos();
+  swipe_servo_mano();
 }
 
 long ultrasonico()
