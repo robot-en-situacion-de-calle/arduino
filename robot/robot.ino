@@ -25,23 +25,38 @@ int chan2 = 145;
 Servo mano;
 Servo cabeza;
 
-void swipe_servo_mano()
+#define CW   1900
+#define STOP 1550
+#define CCW  1000
+
+void abrir_mano()
 {
-  if(cerrar==1)
-  {
-  for(pos = 0; pos <= 100; pos++)
-  {
-    mano.write(pos);
-  }
-  }
-  else 
-    {
   for(pos = 100; pos <= 100; pos--)
   {
     mano.write(pos);
   }
-  }
+}
 
+void cerrar_mano()
+{
+  for(pos = 0; pos <= 100; pos++)
+  {
+    mano.write(pos);
+  }
+}
+
+void subir_cabeza()
+{
+  cabeza.writeMicroseconds(CW);
+  sleep(150);
+  cabeza.writeMicroseconds(STOP);
+}
+
+void bajar_cabeza()
+{
+  cabeza.writeMicroseconds(CCW);
+  sleep(150);
+  cabeza.writeMicroseconds(STOP);
 }
 
 void MIDImessage(byte command, byte data1, byte data2)
@@ -61,8 +76,12 @@ void midi_note(int chan, int nota, int vel)
 
 void moneda()
 {
-  midi_note(chan1,127,transform_range(ldr_value, 1023));
-  swipe_servo_mano();
+  abrir_mano();
+  subir_cabeza();
+  midi_note(chan1,1ls27,transform_range(ldr_value, 1023));
+  cerrar_mano();
+  sleep(100);
+  bajar_cabeza();
 }
 
 long ultrasonico()
