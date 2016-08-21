@@ -2,10 +2,8 @@
 #include <Bounce.h>
 
 int mano_pin = 5;
-int mano_pos = 0;
 int cabeza_pin = 6;
-int cabeza_pos = 0;
-int pos; //TODO mientras tanto los 2 servos se mueven igual
+int pos;
 
 int ldr_pin = A0;
 int ldr_value;
@@ -48,14 +46,14 @@ void cerrar_mano()
 void subir_cabeza()
 {
   cabeza.writeMicroseconds(CW);
-  sleep(150);
+  delay(150);
   cabeza.writeMicroseconds(STOP);
 }
 
 void bajar_cabeza()
 {
   cabeza.writeMicroseconds(CCW);
-  sleep(150);
+  delay(150);
   cabeza.writeMicroseconds(STOP);
 }
 
@@ -78,9 +76,9 @@ void moneda()
 {
   abrir_mano();
   subir_cabeza();
-  midi_note(chan1,1ls27,transform_range(ldr_value, 1023));
+  midi_note(chan1,1,transform_range(ldr_value, 1023));
   cerrar_mano();
-  sleep(100);
+  delay(100);
   bajar_cabeza();
 }
 
