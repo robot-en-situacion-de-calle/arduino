@@ -1,5 +1,4 @@
 #include <Servo.h> 
-#include <Bounce.h>
 
 int mano_pin = 5;
 int cabeza_pin = 3;
@@ -7,7 +6,7 @@ int pos;
 
 int ldr_pin = A0;
 int ldr_value;
-int ldr_umbral = 10; //TODO
+int ldr_umbral = 130;
 int ultrasonico_trigger_pin = 8;
 int ultrasonico_eco_pin = 9;
 long ultrasonico_value;
@@ -74,6 +73,7 @@ void midi_note(int chan, int nota, int vel)
 
 void moneda()
 {
+  delay(200);
   abrir_mano();
   subir_cabeza();
   midi_note(chan1,1,transform_range(ldr_value, 1023));
@@ -94,11 +94,17 @@ long ultrasonico()
 
 int transform_range(long x,int max)
 {
-  return (x/max)*127;
+  int result = map(x, 0, max, 0, 127);
+  //Serial.print("result!! ");
+  //Serial.println(result);
+  return result;
 }
 int transform_range(int x, int max)
 {
-  return (x/max)*127;
+  int result = map(x, 0, max, 0, 127);
+  //Serial.print("result!! ");
+  //Serial.println(result); 
+  return result;
 }
 
 void setup() {
