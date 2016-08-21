@@ -10,7 +10,7 @@ void setup(){
 
 void loop()
 {
-note2=note2+1;
+//note2=note2+1;
  MIDImessage(Chn1, 50,100);//turn note on
   
 delay(600);//wait 200ms until triggering next note

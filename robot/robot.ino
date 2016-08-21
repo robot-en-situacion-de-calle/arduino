@@ -19,6 +19,9 @@ int ultrasonico_last;
 int led = 13;
 int atencion = 0;
 
+int chan1 = 144;
+int chan2 = 145;
+
 Servo mano;
 Servo cabeza;
 
@@ -36,15 +39,24 @@ void swipe_servos()
   }
 }
 
-void midi_note(int nota, int vel, int chan)
+void MIDImessage(byte command, byte data1, byte data2)
 {
-  usbMIDI.sendNoteOn(nota, vel, chan);
-  usbMIDI.sendNoteOff(nota, 0, chan);
+  Serial.write(command);
+  Serial.write(data1);
+  Serial.write(data2);
+}
+
+void midi_note(int chan, int nota, int vel)
+{
+  int temp_millis = millis();
+  MIDImessage(chan, nota, vel);
+  delay(100);
+  MIDImessage(chan, nota, 0);
 }
 
 void moneda()
 {
-  midi_note(127,transform_range(ldr_value, 1023),1);
+  midi_note(chan1,127,transform_range(ldr_value, 1023));
   swipe_servos();
 }
 
@@ -83,11 +95,10 @@ void setup() {
 void loop() {
   ldr_value = analogRead(ldr_pin);
   ultrasonico_value = ultrasonico();
-  Serial.print("ldr: ");
-  Serial.println(ldr_value);
-  Serial.print("ultrasonico: ");
-  Serial.println(ultrasonico_value);
-  //Serial.println(ultrasonico_value*0.017);
+  //Serial.print("ldr: ");
+  //Serial.println(ldr_value);
+  //Serial.print("ultrasonico: ");
+  //Serial.println(ultrasonico_value);
   
   if(ldr_value < ldr_umbral)
   {
@@ -95,7 +106,7 @@ void loop() {
   }
   else
   {
-    midi_note(1,transform_range(ldr_value, 1023),1);
+    midi_note(chan1,0,transform_range(ldr_value, 1023));
   }
 
   if(ultrasonico_value < 170)
@@ -119,6 +130,5 @@ void loop() {
     atencion = 0;
     ultrasonico_last = millis();
   }
-  midi_note(atencion,transform_range(ultrasonico_value, 170),2);
-  delay(100);
+  midi_note(chan2, atencion, transform_range(ultrasonico_value, 170));
 }
