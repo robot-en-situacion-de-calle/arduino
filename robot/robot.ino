@@ -44,10 +44,12 @@ void subir_cabeza()
 {
   if (cabeza_status == 0)
   {
+    delay(100);
+    cabeza.writeMicroseconds(CCW);
   for(pos = 0; pos < 190; pos++)
   {
     cabeza.writeMicroseconds(CW-pos);
-    delay(1);
+    delay(3);
   }
   cabeza.writeMicroseconds(STOP);
   cabeza_status = 1;
@@ -59,7 +61,7 @@ void bajar_cabeza()
   if (cabeza_status)
   {
   cabeza.writeMicroseconds(CCW);
-  delay(20);
+  //delay(100);
   for(pos = 0; pos < 190; pos++)
   {
     cabeza.writeMicroseconds(CCW+pos);
@@ -180,5 +182,5 @@ void loop() {
     delay(400);
     bajar_cabeza();
   }
-  //midi_note(chan2, atencion, transform_range(ultrasonico_value, 170));
+  midi_note(chan2, atencion, transform_range(ultrasonico_value, 170));
 }
